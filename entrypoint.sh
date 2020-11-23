@@ -5,7 +5,7 @@ main (){
     cmd=$1
     dir=$2
     ops=$3
-	opsvalue=$4
+    opsvalue=$4
     if [ ! -e ${dir} ]; then
         echo "${dir}: No such file or directoy exists";
         exit 1;
