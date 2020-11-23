@@ -8,33 +8,37 @@ parameters:
 
 jobs:
 - job: Deck_Ping
-  displayName: Deck Ping for Kong
-  - template: /action.yaml
-    parameters:
-      command: ping
-      options: kong-addr ${{ parameters.kong_url }}
-      
+  displayName: Deck Validate for Kong
+  steps:
+    - template: /action.yaml
+      parameters:
+        command: ping
+        options: kong-addr ${{ parameters.kong_url }}
+        
 - job: Deck_Validate
   displayName: Deck Validate for Kong
-  - template: /action.yaml
-    parameters:
-      command: validate
-      options: kong-addr ${{ parameters.kong_url }}
-      kong_workspaces: kong
+  steps:
+    - template: /action.yaml
+      parameters:
+        command: validate
+        options: kong-addr ${{ parameters.kong_url }}
+        kong_workspaces: kong
       
 - job: Deck_Diff
   displayName: Deck Diff for Kong
-  - template: /action.yaml
-    parameters:
-      command: diff
-      options: kong-addr ${{ parameters.kong_url }}
-      kong_workspaces: kong
+  steps:
+    - template: /action.yaml
+      parameters:
+        command: diff
+        options: kong-addr ${{ parameters.kong_url }}
+        kong_workspaces: kong
 
 - ${{ if eq(parameters.to_sync, true) }}:      
   - job: Deck_Sync
     displayName: Deck Sync for Kong
-    - template: /action.yaml
-      parameters:
-        command: sync
-        options: kong-addr ${{ parameters.kong_url }}
-        kong_workspaces: kong
+    steps:
+      - template: /action.yaml
+        parameters:
+          command: sync
+          options: kong-addr ${{ parameters.kong_url }}
+          kong_workspaces: kong
