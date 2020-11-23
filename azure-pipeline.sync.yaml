@@ -5,7 +5,7 @@ resources:
 - repo: self
 
 stages:
-- stage: BuildAndPushDockerImage
+- stage: build_and_push_docker_image
   displayName: Build and push deck docker image
   jobs:
   - job: deckAction
@@ -19,29 +19,33 @@ stages:
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
         tags: latest  
-      
-- stage: Deck_Ping
-  displayName: Deck Ping for Kong
+
+- stage: deck_master
+  displayName: Deck Master Environment
+  condition: and(or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'BatchedCI'), eq(variables['Build.Reason'], 'Manual')), succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  dependsOn: build_and_push_docker_image
   jobs:
-  - template: /action.yaml
+  - template: /deck_commands.yaml
     parameters:
-      command: ping
-      options: kong-addr https://heroku-kong-pjanicked.herokuapp.com/kong-admin https://pjanicked-kong-two.herokuapp.com/kong-admin
+      kong_url: https://heroku-kong-pjanicked.herokuapp.com/kong-admin
+      to_sync: true
       
-- stage: Deck_Validate
-  displayName: Deck Validate for Kong
+- stage: deck_test
+  displayName: Deploy Test Environment
+  condition: and(or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'BatchedCI'), eq(variables['Build.Reason'], 'Manual')), succeeded())
+  dependsOn: build_and_push_docker_image
   jobs:
-  - template: /action.yaml
+  - template: /deck_commands.yaml
     parameters:
-      command: validate
-      options: kong-addr https://heroku-kong-pjanicked.herokuapp.com/kong-admin https://pjanicked-kong-two.herokuapp.com/kong-admin
-      kong_workspaces: kong
-      
-- stage: Deck_Sync
-  displayName: Deck Sync for Kong
+      kong_url: https://pjanicked-kong-two.herokuapp.com/kong-admin
+      to_sync: true
+
+- stage: deck_dev
+  displayName: Deploy Development Environment
+  condition: and(or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'BatchedCI'), eq(variables['Build.Reason'], 'Manual')), succeeded())
+  dependsOn: build_and_push_docker_image
   jobs:
-  - template: /action.yaml
+  - template: /deck_commands.yaml
     parameters:
-      command: sync
-      options: kong-addr https://heroku-kong-pjanicked.herokuapp.com/kong-admin https://pjanicked-kong-two.herokuapp.com/kong-admin
-      kong_workspaces: kong
+      kong_url: https://pjanicked-kong-two.herokuapp.com/kong-admin
+      to_sync: true

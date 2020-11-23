@@ -24,18 +24,19 @@ jobs:
         command: validate
         options: kong-addr ${{ parameters.kong_url }}
         kong_workspaces: kong
-      
-- job: Deck_Diff
-  displayName: Deck Diff for Kong
-  dependsOn:
-  - Deck_Ping
-  - Deck_Validate
-  steps:
-    - template: /action.yaml
-      parameters:
-        command: diff
-        options: kong-addr ${{ parameters.kong_url }}
-        kong_workspaces: kong
+
+- ${{ if eq(parameters.to_sync, false) }}:       
+  - job: Deck_Diff
+    displayName: Deck Diff for Kong
+    dependsOn:
+    - Deck_Ping
+    - Deck_Validate
+    steps:
+      - template: /action.yaml
+        parameters:
+          command: diff
+          options: kong-addr ${{ parameters.kong_url }}
+          kong_workspaces: kong
 
 - ${{ if eq(parameters.to_sync, true) }}:      
   - job: Deck_Sync

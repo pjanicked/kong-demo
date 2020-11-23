@@ -1,4 +1,4 @@
-trigger:
+pr:
 - master
 
 resources:
@@ -20,32 +20,29 @@ stages:
         Dockerfile: '**/Dockerfile'
         tags: latest  
 
-- stage: deploy_master
-  displayName: Deploy Master
+- stage: deck_master
+  displayName: Deck Master Environment
   condition: and(or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'BatchedCI'), eq(variables['Build.Reason'], 'Manual')), succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   dependsOn: build_and_push_docker_image
   jobs:
   - template: /deck_commands.yaml
     parameters:
       kong_url: https://heroku-kong-pjanicked.herokuapp.com/kong-admin
-      to_sync: true
       
-- stage: deploy_test
-  displayName: Deploy Test
+- stage: deck_test
+  displayName: Deck Test Environment
   condition: and(or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'BatchedCI'), eq(variables['Build.Reason'], 'Manual')), succeeded())
   dependsOn: build_and_push_docker_image
   jobs:
   - template: /deck_commands.yaml
     parameters:
       kong_url: https://pjanicked-kong-two.herokuapp.com/kong-admin
-      to_sync: false
 
-- stage: deploy_dev
-  displayName: Deploy Development
+- stage: deck_dev
+  displayName: Deploy Development Environment
   condition: and(or(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.Reason'], 'BatchedCI'), eq(variables['Build.Reason'], 'Manual')), succeeded())
   dependsOn: build_and_push_docker_image
   jobs:
   - template: /deck_commands.yaml
     parameters:
       kong_url: https://pjanicked-kong-two.herokuapp.com/kong-admin
-      to_sync: false
