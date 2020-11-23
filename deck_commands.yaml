@@ -1,0 +1,44 @@
+parameters:
+- name: kong_url
+  type: string
+  default: http://dg-dev.dev.apdcomms.co.uk:8001
+- name: to_sync
+  type: boolean
+  default: false
+
+stages:
+- stage: Deck_Ping
+  displayName: Deck Ping for Kong
+  jobs:
+  - template: /action.yaml
+    parameters:
+      command: ping
+      options: kong-addr ${{ parameters.kong_url }}
+      
+- stage: Deck_Validate
+  displayName: Deck Validate for Kong
+  jobs:
+  - template: /action.yaml
+    parameters:
+      command: validate
+      options: kong-addr ${{ parameters.kong_url }}
+      kong_workspaces: kong
+      
+- stage: Deck_Diff
+  displayName: Deck Diff for Kong
+  jobs:
+  - template: /action.yaml
+    parameters:
+      command: diff
+      options: kong-addr ${{ parameters.kong_url }}
+      kong_workspaces: kong
+
+- ${{ if eq(parameters.to_sync, true) }}:      
+ - stage: Deck_Sync
+   displayName: Deck Sync for Kong
+   jobs:
+   - template: /action.yaml
+     parameters:
+       command: sync
+       options: kong-addr ${{ parameters.kong_url }}
+       kong_workspaces: kong
