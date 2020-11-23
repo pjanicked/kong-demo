@@ -6,8 +6,8 @@ parameters:
   type: boolean
   default: false
 
-stages:
-- stage: Deck_Ping
+jobs:
+- job: Deck_Ping
   displayName: Deck Ping for Kong
   jobs:
   - template: /action.yaml
@@ -15,7 +15,7 @@ stages:
       command: ping
       options: kong-addr ${{ parameters.kong_url }}
       
-- stage: Deck_Validate
+- job: Deck_Validate
   displayName: Deck Validate for Kong
   jobs:
   - template: /action.yaml
@@ -24,7 +24,7 @@ stages:
       options: kong-addr ${{ parameters.kong_url }}
       kong_workspaces: kong
       
-- stage: Deck_Diff
+- job: Deck_Diff
   displayName: Deck Diff for Kong
   jobs:
   - template: /action.yaml
@@ -34,7 +34,7 @@ stages:
       kong_workspaces: kong
 
 - ${{ if eq(parameters.to_sync, true) }}:      
-  - stage: Deck_Sync
+  - job: Deck_Sync
     displayName: Deck Sync for Kong
     jobs:
     - template: /action.yaml
