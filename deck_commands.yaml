@@ -8,7 +8,7 @@ parameters:
 
 jobs:
 - job: Deck_Ping
-  displayName: Deck Validate for Kong
+  displayName: Deck Ping for Kong
   steps:
     - template: /action.yaml
       parameters:
@@ -17,6 +17,7 @@ jobs:
         
 - job: Deck_Validate
   displayName: Deck Validate for Kong
+  dependsOn: Deck_Ping
   steps:
     - template: /action.yaml
       parameters:
@@ -26,6 +27,9 @@ jobs:
       
 - job: Deck_Diff
   displayName: Deck Diff for Kong
+  dependsOn:
+  - Deck_Ping
+  - Deck_Validate
   steps:
     - template: /action.yaml
       parameters:
@@ -36,6 +40,9 @@ jobs:
 - ${{ if eq(parameters.to_sync, true) }}:      
   - job: Deck_Sync
     displayName: Deck Sync for Kong
+    dependsOn:
+    - Deck_Ping
+    - Deck_Validate
     steps:
       - template: /action.yaml
         parameters:
