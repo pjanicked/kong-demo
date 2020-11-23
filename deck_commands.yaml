@@ -9,7 +9,6 @@ parameters:
 jobs:
 - job: Deck_Ping
   displayName: Deck Ping for Kong
-  jobs:
   - template: /action.yaml
     parameters:
       command: ping
@@ -17,7 +16,6 @@ jobs:
       
 - job: Deck_Validate
   displayName: Deck Validate for Kong
-  jobs:
   - template: /action.yaml
     parameters:
       command: validate
@@ -26,7 +24,6 @@ jobs:
       
 - job: Deck_Diff
   displayName: Deck Diff for Kong
-  jobs:
   - template: /action.yaml
     parameters:
       command: diff
@@ -36,7 +33,6 @@ jobs:
 - ${{ if eq(parameters.to_sync, true) }}:      
   - job: Deck_Sync
     displayName: Deck Sync for Kong
-    jobs:
     - template: /action.yaml
       parameters:
         command: sync
