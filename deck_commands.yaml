@@ -34,11 +34,11 @@ stages:
       kong_workspaces: kong
 
 - ${{ if eq(parameters.to_sync, true) }}:      
- - stage: Deck_Sync
-   displayName: Deck Sync for Kong
-   jobs:
-   - template: /action.yaml
-     parameters:
-       command: sync
-       options: kong-addr ${{ parameters.kong_url }}
-       kong_workspaces: kong
+  - stage: Deck_Sync
+    displayName: Deck Sync for Kong
+    jobs:
+    - template: /action.yaml
+      parameters:
+        command: sync
+        options: kong-addr ${{ parameters.kong_url }}
+        kong_workspaces: kong
